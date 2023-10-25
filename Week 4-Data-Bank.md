@@ -20,8 +20,8 @@ select count(distinct region_id) as total_nodes from data_bank.customer_nodes;
 ````
 ### 2. What is the number of nodes per region?
 ````sql
-select 
-	region_name,
+select
+  region_name,
   count(distinct node_id) as total_node
 from data_bank.customer_nodes n
 left join data_bank.regions r
@@ -31,7 +31,7 @@ group by region_name;
 ### 3. How many customers are allocated to each region?
 ````sql
 select 
-	region_name,
+  region_name,
   count(distinct customer_id) as total_node
 from data_bank.customer_nodes n
 left join data_bank.regions r
@@ -42,34 +42,34 @@ group by region_name;
 ````sql
 with day_in_node as
 (select 
-	customer_id,
+  customer_id,
   node_id,
-	sum(end_date - start_date) as days
+  sum(end_date - start_date) as days
 from data_bank.customer_nodes
 where end_date != '9999-12-31'
 group by 
- 	customer_id,
- 	node_id)    
+  customer_id,
+  node_id)    
 select round(avg(days)) as vag_days from day_in_node;    
  ````
 ### 5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
 ````sql
 with day_in_node as
 (select 
- 	region_id, 
-	customer_id,
-    node_id,
-	sum(end_date - start_date) as days
+  region_id, 
+  customer_id,
+  node_id,
+  sum(end_date - start_date) as days
 from data_bank.customer_nodes
 where end_date != '9999-12-31'
 group by 
- 	region_id,
- 	customer_id,
- 	node_id)
+  region_id,
+  customer_id,
+  node_id)
 select 
-	percentile_cont(0.5) within group(order by days) as median,
-    percentile_cont(0.8) within group(order by days) as per_80,
-    percentile_cont(0.95) within group(order by days) as per_95
+  percentile_cont(0.5) within group(order by days) as median,
+  percentile_cont(0.8) within group(order by days) as per_80,
+  percentile_cont(0.95) within group(order by days) as per_95
 from  day_in_node;
 ````
 ## B. Customer Transactions
@@ -93,14 +93,14 @@ where txn_type = 'deposit';
 ````sql
 with t as
 (select 
-	  extract ('month' from txn_date) as months,
-    customer_id,
-    sum(case when txn_type = 'deposit' then 1 else 0 end) as deposit,
-    sum(case when txn_type != 'deposit' then 1 else 0 end) as other
+  extract ('month' from txn_date) as months,
+  customer_id,
+  sum(case when txn_type = 'deposit' then 1 else 0 end) as deposit,
+  sum(case when txn_type != 'deposit' then 1 else 0 end) as other
 from data_bank.customer_transactions
 group by 
-	customer_id,
-    extract ('month' from txn_date))
+  customer_id,
+  extract ('month' from txn_date))
 select months, count (*) as total_customer
 from t
 where deposit > 0 and other > 0
