@@ -83,6 +83,9 @@ set week_number = extract(week from week_date),
         end,
     avg_transaction = sales/ transactions ;
 ````
+This is top rows from **weekly_sales**:
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/23e1c609-f9e8-47e7-906d-0bf749e7d767)
    
 **2. Data Exploration**
 
@@ -108,24 +111,78 @@ where w.week_number is null
 - **Answer:** Missing numbers are in the range of 1-12 and 37-53
 3. How many total transactions were there for each year in the dataset?
 ```` sql
-
+select 
+	calendar_year,
+    	sum(transactions) as total_transaction
+from data_mart.weekly_sales
+group by calendar_year;    
 ````
+**Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/42009cce-c5c6-4704-adaa-2cfbe4a5543e)
+
 4. What is the total sales for each region for each month?
 ```` sql
-
+select 
+	region,
+    	calendar_year,
+    	month_number,
+    	sum(sales) as total_sales
+from data_mart.weekly_sales
+group by 
+	region,
+    	calendar_year,
+    	month_number
+order by 
+	region asc,
+	calendar_year asc,
+	month_number asc;
 ````
 5. What is the total count of transactions for each platform
 ```` sql
-
+select 
+	platform,
+    	sum(transactions) as total_transaction
+from data_mart.weekly_sales
+group by platform;  
 ````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/9a1dd8ed-8b18-4590-83a1-5f131453b475)
+
+
 6. What is the percentage of sales for Retail vs Shopify for each month?
 ```` sql
-
+select
+	calendar_year,
+    	month_number,
+    	round(sum(case when platform ='Retail' then sales else 0 end) / sum(sales)*100,2) as retail_percent,
+	round(sum(case when platform ='Shopify' then sales else 0 end) / sum(sales)*100,2) as shopify_percent
+from data_mart.weekly_sales
+group by 
+	month_number,
+    	calendar_year
+order by
+	calendar_year asc,
+	month_number asc
 ````
 7. What is the percentage of sales by demographic for each year in the dataset?
 ```` sql
-
+select
+    	calendar_year,
+    	round(sum(case when demographic ='Couples' then sales else 0 end) / sum(sales)*100,2) as couples_percent,
+	round(sum(case when demographic ='Families' then sales else 0 end) / sum(sales)*100,2) as families_percent,
+    	round(sum(case when demographic ='unknown' then sales else 0 end) / sum(sales)*100,2) as unknown_percent
+from data_mart.weekly_sales
+group by 
+    	calendar_year
+order by
+	calendar_year asc;
 ````
+**Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/88f93a1a-a0b0-4788-ba9e-60d08e54e204)
+
+
 8. Which **age_band** and **demographic** values contribute the most to Retail sales?
 ```` sql
 
