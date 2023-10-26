@@ -87,15 +87,53 @@ set week_number = extract(week from week_date),
 **2. Data Exploration**
 
 1. What day of the week is used for each **week_date** value?
-2. What range of week numbers are missing from the dataset?
-3. How many total transactions were there for each year in the dataset?
-4. What is the total sales for each region for each month?
-5. What is the total count of transactions for each platform
-6. What is the percentage of sales for Retail vs Shopify for each month?
-7. What is the percentage of sales by demographic for each year in the dataset?
-8. Which **age_band** and **demographic** values contribute the most to Retail sales?
-9. Can we use the **avg_transaction** column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+```` sql
+select distinct to_char(week_date, 'Day')
+from data_mart.weekly_sales;
+````
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/e883ca6c-5647-423a-8743-2d06b73cb78b)
 
+- **Answer:** **Monday** is used for each week_date
+
+2. What range of week numbers are missing from the dataset?
+```` sql
+with t as(
+select generate_series(1, 53) as number)
+select number
+from t
+left join data_mart.weekly_sales w
+	on w.week_number = t.number
+where w.week_number is null
+````
+- **Answer:** Missing numbers are in the range of 1-12 and 37-53
+3. How many total transactions were there for each year in the dataset?
+```` sql
+
+````
+4. What is the total sales for each region for each month?
+```` sql
+
+````
+5. What is the total count of transactions for each platform
+```` sql
+
+````
+6. What is the percentage of sales for Retail vs Shopify for each month?
+```` sql
+
+````
+7. What is the percentage of sales by demographic for each year in the dataset?
+```` sql
+
+````
+8. Which **age_band** and **demographic** values contribute the most to Retail sales?
+```` sql
+
+````
+9. Can we use the **avg_transaction** column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+```` sql
+
+````  
 **3. Before & After Analysis**
 
 This technique is usually used when we inspect an important event and want to inspect the impact before and after a certain point in time.
