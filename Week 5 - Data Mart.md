@@ -22,6 +22,8 @@ The columns are pretty self-explanatory based on the column names but here are s
 3. Customer **segment** and **customer_type** data relates to personal age and demographics information that is shared with Data Mart
 4. **transactions** is the count of unique purchases made through Data Mart and sales is the actual dollar amount of purchases
 Each record in the dataset is related to a specific aggregated slice of the underlying sales data rolled up into a week_date value which represents the start of the sales week.
+#### Example Rows
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/d693f93b-3bb5-4949-928d-dee9ad80fc5c)
 
 ### ------ Case Study Questions ------
 The following case study questions require some data cleaning steps before we start to unpack Danny’s key business questions in more depth.
@@ -52,21 +54,34 @@ In a single query, perform the following operations and generate a new table in 
 - Generate a new avg_transaction column as the sales value divided by transactions rounded to 2 decimal places for each record
 ```` sql
 alter table data_mart.weekly_sales
-alter column week_date type date using TO_DATE(week_date, 'DD/MM/YY');
+alter column week_date type date using TO_DATE(week_date, 'DD/MM/YY'), --Chuyển cột date sang type date
+alter column transactions type decimal, -- chuyển cột transactions và sales sang type decimal để tính cột avg_transaction sang số thập phân
+alter column sales type decimal;
 
 alter table data_mart.weekly_sales
 add column week_number integer,
 add column month_number integer,
-add column year_number integer,
-add column age_band integer,
-add column demographic  integer;
+add column calendar_year  integer,
+add column age_band varchar(30),
+add column demographic  varchar(30),
+add column avg_transaction numeric(10,2) ;
 
 update data_mart.weekly_sales
 set week_number = extract(week from week_date),
- month_number = extract(month from week_date),
- year_number = extract(year from week_date);
-
-select * from data_mart.weekly_sales
+ 	month_number = extract(month from week_date),
+ 	calendar_year  = extract(year from week_date),
+    age_band = case 
+      	when segment = 'null' then 'unknown'
+      	when right(segment,1) = '1' then 'Young Adults'
+      	when right(segment,1) = '2' then 'Middle Aged'
+        else 'Retirees'
+        end,
+    demographic = case
+    	when segment = 'null' then 'unknown'
+        when left(segment,1) = 'C' then 'Couples'
+        else 'Families'
+        end,
+    avg_transaction = sales/ transactions ;
 ````
    
 **2. Data Exploration**
