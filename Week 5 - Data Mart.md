@@ -231,8 +231,65 @@ Taking the week_date value of 2020-06-15 as the baseline week where the Data Mar
 We would include all week_date values for 2020-06-15 as the start of the period after the change and the previous week_date values would be before
 Using this analysis approach - answer the following questions:
 1. What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales?
+```` sql
+with t as(
+select 
+	sum(case when week_date between '2020-06-15' and '2020-06-14'::date + interval '4 weeks' then sales else 0 end) as sales_after,
+	sum(case when week_date between '2020-06-15'::date - interval '4 weeks' and '2020-06-14' then sales else 0 end) as sales_before    
+from data_mart.weekly_sales)
+select 
+	sales_before,
+    sales_after,
+    sales_after - sales_before as changes,
+    round((sales_after - sales_before)/sales_before*100,2) as percent_changes
+from t;
+````
+
+ **Answer:**
+ 
+ ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/f7e1b7a3-8dc8-4da8-9e76-6416b4860f11)
+
 2. What about the entire 12 weeks before and after?
+```` sql
+with t as(
+select 
+	sum(case when week_date between '2020-06-15' and '2020-06-14'::date + interval '12 weeks' then sales else 0 end) as sales_after,
+	sum(case when week_date between '2020-06-15'::date - interval '12 weeks' and '2020-06-14' then sales else 0 end) as sales_before    
+from data_mart.weekly_sales)
+select 
+	sales_before,
+    sales_after,
+    sales_after - sales_before as changes,
+    round((sales_after - sales_before)/sales_before*100,2) as percent_changes
+from t;
+````
+
+ **Answer:**
+
+ ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/132faee2-c5a0-4bb2-a7be-c0d50c61fa3e)
+
 3. How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
+   
+I just show periods before and after 4 weeks in 2018 and 2019 because these codes are the same
+```` sql
+with t as(
+select 
+	sum(case when week_date between '2019-06-15' and '2019-06-14'::date + interval '4 weeks' then sales else 0 end) as sales_after_19,
+	sum(case when week_date between '2019-06-15'::date - interval '4 weeks' and '2019-06-14' then sales else 0 end) as sales_before_19,
+	sum(case when week_date between '2018-06-15' and '2018-06-14'::date + interval '4 weeks' then sales else 0 end) as sales_after_18,
+	sum(case when week_date between '2018-06-15'::date - interval '4 weeks' and '2018-06-14' then sales else 0 end) as sales_before_18   
+from data_mart.weekly_sales)
+select 
+    sales_after_19 - sales_before_19 as changes_19,
+    round((sales_after_19 - sales_before_19)/sales_before_19*100,2) as percent_changes_19,
+    sales_after_18 - sales_before_18 as changes_18,
+    round((sales_after_18 - sales_before_18)/sales_before_18*100,2) as percent_changes_18   
+from t;
+````
+
+ **Answer:**
+
+ ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/46df0403-8673-4db2-a910-96ee78d42730)
 
 **4. Bonus Question**
 
