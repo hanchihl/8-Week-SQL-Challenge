@@ -147,8 +147,9 @@ from data_mart.weekly_sales
 group by platform;  
 ````
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/9a1dd8ed-8b18-4590-83a1-5f131453b475)
+**Answer:**
 
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/9a1dd8ed-8b18-4590-83a1-5f131453b475)
 
 6. What is the percentage of sales for Retail vs Shopify for each month?
 ```` sql
@@ -185,12 +186,44 @@ order by
 
 8. Which **age_band** and **demographic** values contribute the most to Retail sales?
 ```` sql
-
+select 
+	age_band, 
+	demographic,
+	sum(sales) as total_sales
+from data_mart.weekly_sales
+where 
+ 	and platform = 'Retail'
+group by     
+	age_band, 
+	demographic
+order by total_sales desc
+limit 1;
 ````
-9. Can we use the **avg_transaction** column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
-```` sql
 
-````  
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/59610575-d8d0-44e1-a4fb-3d64aae55ba7)
+
+- **Answer:** Unknown age_band  and demographic has the most to Retail sales
+
+9. Can we use the **avg_transaction** column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+We can't use average transaction size for each year for Retail vs Shopify. Right calculate = sum Sales/sum Transactions
+```` sql
+with t as
+(
+select 
+	platform,
+  	calendar_year,
+  	avg(transactions) as avg_trans_group,
+    avg(avg_transaction) as avg_trans
+from data_mart.weekly_sales  
+group by     
+	platform, 
+  	calendar_year;
+````
+
+ **Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/72c7b5e1-b7db-4453-a8dd-e01823046a25)
+
 **3. Before & After Analysis**
 
 This technique is usually used when we inspect an important event and want to inspect the impact before and after a certain point in time.
