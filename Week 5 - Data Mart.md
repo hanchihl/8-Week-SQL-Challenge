@@ -291,13 +291,6 @@ from t;
 
  ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/46df0403-8673-4db2-a910-96ee78d42730)
 
-**4. Bonus Question**
-
-Which areas of the business have the highest negative impact in sales metrics performance in 2020 for the 12 week before and after period?
-- region
-- platform
-- age_band
-- demographic
 - customer_type
   
 Do you have any further recommendations for Danny’s team at Data Mart or any interesting insights based off this analysis?
