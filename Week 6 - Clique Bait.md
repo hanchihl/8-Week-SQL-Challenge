@@ -10,29 +10,29 @@ For this case study there is a total of 5 datasets which you will need to combin
 #### Users
 Customers who visit the Clique Bait website are tagged via their cookie_id.
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/27056fe2-643f-4f51-848e-2811b14ab84b)
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/27056fe2-643f-4f51-848e-2811b14ab84b" width=400 height=400>
 
 #### Events
 Customer visits are logged in this events table at a cookie_id level and the event_type and page_id values can be used to join onto relevant satellite tables to obtain further information about each event.
 
 The sequence_number is used to order the events within each visit.
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/df6eff30-1ee6-419f-85dd-b513c1425e59)
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/df6eff30-1ee6-419f-85dd-b513c1425e59" width=600 height=450>
 
 #### Event Identifier
 The event_identifier table shows the types of events which are captured by Clique Bait’s digital data systems.
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2f8421c0-1846-430f-8a20-cf85a332d8f9)
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2f8421c0-1846-430f-8a20-cf85a332d8f9" width=400 height=300>
 
 #### Campaign Identifier
 This table shows information for the 3 campaigns that Clique Bait has ran on their website so far in 2020.
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b25be6f7-82d3-4963-92b2-96614468715a)
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b25be6f7-82d3-4963-92b2-96614468715a" width=600 height=400>
 
 #### Page Hierarchy
 This table lists all of the pages on the Clique Bait website which are tagged and have data passing through from user interaction events.
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/dddbb258-5009-4da7-92f5-38565e9cec1f)
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/dddbb258-5009-4da7-92f5-38565e9cec1f" width=400 height=400>
 
 ### Case Study Questions
 #### 1. Enterprise Relationship Diagram
