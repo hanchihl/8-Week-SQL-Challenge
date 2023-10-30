@@ -36,20 +36,76 @@ This table lists all of the pages on the Clique Bait website which are tagged an
 
 ### Case Study Questions
 #### 1. Enterprise Relationship Diagram
-Using the following DDL schema details to create an ERD for all the Clique Bait datasets.
+[Link Diagram for dataset](https://dbdiagram.io/d/Clique-Bait_Week_6-653f5ea2ffbf5169f0b5ac9b)
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/a67bbdbc-1a37-492c-bfec-2eef5b51d7fe)
 
 #### 2. Digital Analysis
 Using the available datasets - answer the following questions using a single query for each one:
-
 1. How many users are there?
+```sql
+select count(distinct user_id) as total_user
+from clique_bait.users
+````
+**Answers:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/19e91e28-4feb-4ff7-80ab-daf5fa272eca)
+
 2. How many cookies does each user have on average?
+```sql
+with t as 
+(select user_id, count(*)
+from clique_bait.users
+group by user_id)
+select round(avg(count),0) as avg_cookies from t;
+````
+**Answers:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/8be27b5c-c22e-4975-bdf7-00b59e840076)
+
 3. What is the unique number of visits by all users per month?
+```sql
+with t as (
+select
+	  user_id,
+  	visit_id
+from clique_bait.events e
+left join clique_bait.users u
+on e.cookie_id = u.cookie_id)
+select 
+	  user_id,
+    count(*) as unique_visit
+from t
+group by user_id;
+````
+**Answers:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/86efd9ac-8e9f-4722-8bde-2d50f3423c94)
+
 4. What is the number of events for each event type?
+```sql
+
+````
 5. What is the percentage of visits which have a purchase event?
+```sql
+
+````
 6. What is the percentage of visits which view the checkout page but do not have a purchase event?
+```sql
+
+````
 7. What are the top 3 pages by number of views?
+```sql
+
+````
 8. What is the number of views and cart adds for each product category?
+```sql
+
+````
 9. What are the top 3 products by purchases?
+```sql
+
+````
 
 #### 3. Product Funnel Analysis
 Using a single SQL query - create a new output table which has the following details:
