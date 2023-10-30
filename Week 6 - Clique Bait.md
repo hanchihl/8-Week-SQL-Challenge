@@ -65,22 +65,15 @@ select round(avg(count),0) as avg_cookies from t;
 
 3. What is the unique number of visits by all users per month?
 ```sql
-with t as (
-select
-	  user_id,
-  	visit_id
-from clique_bait.events e
-left join clique_bait.users u
-on e.cookie_id = u.cookie_id)
 select 
-	  user_id,
-    count(*) as unique_visit
-from t
-group by user_id;
+	extract(month from event_time) as months,
+    count(distinct visit_id) as unique_visits
+from clique_bait.events
+group by months;
 ````
 **Answers:**
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/86efd9ac-8e9f-4722-8bde-2d50f3423c94)
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/5359a8cb-447b-424e-b296-26866e9d89b0)
 
 4. What is the number of events for each event type?
 ```sql
