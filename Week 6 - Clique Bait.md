@@ -22,12 +22,12 @@ The sequence_number is used to order the events within each visit.
 #### Event Identifier
 The event_identifier table shows the types of events which are captured by Clique Bait’s digital data systems.
 
-<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2f8421c0-1846-430f-8a20-cf85a332d8f9" width=400 height=300>
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2f8421c0-1846-430f-8a20-cf85a332d8f9" width=250 height=300>
 
 #### Campaign Identifier
 This table shows information for the 3 campaigns that Clique Bait has ran on their website so far in 2020.
 
-<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b25be6f7-82d3-4963-92b2-96614468715a" width=600 height=400>
+<img src="https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b25be6f7-82d3-4963-92b2-96614468715a" width=500 height=230>
 
 #### Page Hierarchy
 This table lists all of the pages on the Clique Bait website which are tagged and have data passing through from user interaction events.
