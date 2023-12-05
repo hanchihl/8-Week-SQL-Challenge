@@ -77,6 +77,16 @@ group by months;
 
 4. What is the number of events for each event type?
 ```sql
+select 
+	event_type,
+	count(*) as number_event
+from clique_bait.events
+group by event_type
+order by event_type asc;
+````
+**Answers:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/770b048f-8655-4807-b4f0-834cfae7d39f)
 
 ````
 5. What is the percentage of visits which have a purchase event?
