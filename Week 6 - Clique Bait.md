@@ -88,19 +88,38 @@ order by event_type asc;
 
 ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/770b048f-8655-4807-b4f0-834cfae7d39f)
 
-````
 5. What is the percentage of visits which have a purchase event?
 ```sql
-
+select 
+	100 * count (distinct visit_id) / 
+    ( select count (distinct visit_id)
+    	from clique_bait.events) as percentage
+from clique_bait.events
+where event_type = 3
 ````
+**Answers:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2daef755-bb45-475e-8b27-b00db0813d45)
+
 6. What is the percentage of visits which view the checkout page but do not have a purchase event?
 ```sql
 
 ````
 7. What are the top 3 pages by number of views?
 ```sql
-
+select 
+	event_name, count (*) as number_of_view
+from clique_bait.events e
+left join clique_bait.event_identifier ei
+on e.event_type = ei.event_type
+group by event_name
+order by number_of_view desc
+limit 3;
 ````
+**Answers:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/955edff6-8e5f-4cbe-9363-a7a989c3c2bf)
+
 8. What is the number of views and cart adds for each product category?
 ```sql
 
