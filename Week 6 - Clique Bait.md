@@ -175,6 +175,40 @@ Use your 2 new output tables - answer the following questions:
 4. What is the average conversion rate from view to cart add?
 5. What is the average conversion rate from cart add to purchase?
 
+```sql
+t1 as
+(
+  select 
+	p.page_name as product,
+    count(
+      	case when event_name = 'Page View' then 1 end) as total_views     
+	from clique_bait.events e
+	left join clique_bait.event_identifier ei
+		on e.event_type = ei.event_type
+	left join clique_bait.page_hierarchy p
+		on e.page_id = p.page_id    
+	group by product),
+t2 as    
+(
+  select 
+	p.page_name as product,
+    count(
+      	case when event_name = 'Add to Cart' then 1 end) as total_add_carts   
+	from clique_bait.events e
+	left join clique_bait.event_identifier ei
+		on e.event_type = ei.event_type
+	left join clique_bait.page_hierarchy p
+		on e.page_id = p.page_id    
+	group by product)
+select 
+	t1.product, 
+    total_views,
+    total_add_carts
+from t1
+left join t2
+	on t1.product = t2.product
+````
+
 #### 4. Campaigns Analysis
 Generate a table that has 1 single row for every unique **visit_id** record and has the following columns:
 
