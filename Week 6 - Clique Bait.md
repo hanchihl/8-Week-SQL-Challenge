@@ -111,7 +111,7 @@ select
 	event_name, count (*) as number_of_view
 from clique_bait.events e
 left join clique_bait.event_identifier ei
-on e.event_type = ei.event_type
+	on e.event_type = ei.event_type
 group by event_name
 order by number_of_view desc
 limit 3;
@@ -122,8 +122,22 @@ limit 3;
 
 8. What is the number of views and cart adds for each product category?
 ```sql
-
+select 
+	p.product_category,
+    count(
+      	case when event_name = 'Page View' then 1 end) as total_views,
+    count(
+      	case when event_name = 'Add to Cart' then 1 end) as total_add_carts       
+from clique_bait.events e
+left join clique_bait.event_identifier ei
+	on e.event_type = ei.event_type
+left join clique_bait.page_hierarchy p
+	on e.page_id = p.page_id    
+group by p.product_category; 
 ````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/f90daf97-31e3-4f5d-a6f6-931c95421cef)
+
 9. What are the top 3 products by purchases?
 ```sql
 
