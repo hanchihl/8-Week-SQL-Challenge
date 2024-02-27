@@ -103,8 +103,23 @@ where event_type = 3
 
 6. What is the percentage of visits which view the checkout page but do not have a purchase event?
 ```sql
+with checkout_purchase as (
+select 
+  visit_id,
+  max(case when event_type = 1 and page_id = 12 then 1 else 0 end) as checkout,
+  max(case when event_type = 3 then 1 else 0 end) as purchase
+from clique_bait.events
+group by visit_id)
+
+select 
+  round(100 * (1-(sum(purchase)::numeric/sum(checkout))),2) as percentage_checkout_view_with_no_purchase
+from checkout_purchase"
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/e57c033c-be87-4f97-93d4-33f302d87bdb)
 
 ````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/9f7d12d7-7f1b-4735-9d26-aeb64717ee65)
+
 7. What are the top 3 pages by number of views?
 ```sql
 select 
