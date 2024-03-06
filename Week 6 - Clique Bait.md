@@ -176,7 +176,7 @@ Use your 2 new output tables - answer the following questions:
 5. What is the average conversion rate from cart add to purchase?
 
 ```sql
-t1 as
+with t1 as
 (
   select 
 	p.page_name as product,
@@ -187,7 +187,7 @@ t1 as
 		on e.event_type = ei.event_type
 	left join clique_bait.page_hierarchy p
 		on e.page_id = p.page_id    
-	group by product),
+	group by p.page_name),
 t2 as    
 (
   select 
@@ -199,14 +199,30 @@ t2 as
 		on e.event_type = ei.event_type
 	left join clique_bait.page_hierarchy p
 		on e.page_id = p.page_id    
-	group by product)
+	group by p.page_name),
+t4 as
+(
+  select 
+	p.page_name as product,
+    count(
+      	case when event_name = 'Purchase' then 1 end) as total_purchase   
+	from clique_bait.events e
+	left join clique_bait.event_identifier ei
+		on e.event_type = ei.event_type
+	left join clique_bait.page_hierarchy p
+		on e.page_id = p.page_id    
+	group by p.page_name)
+
 select 
 	t1.product, 
     total_views,
-    total_add_carts
+    total_add_carts,
+    total_purchase
 from t1
 left join t2
 	on t1.product = t2.product
+left join t4
+	on t1.product = t4.product    
 ````
 
 #### 4. Campaigns Analysis
