@@ -113,8 +113,7 @@ group by visit_id)
 
 select 
   round(100 * (1-(sum(purchase)::numeric/sum(checkout))),2) as percentage_checkout_view_with_no_purchase
-from checkout_purchase"
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/e57c033c-be87-4f97-93d4-33f302d87bdb)
+from checkout_purchase
 
 ````
 
@@ -190,7 +189,7 @@ product_summary as
     		count(case when event_name = 'Page View' then 1 end) as total_views  ,
   		count(case when event_name = 'Add to Cart' then 1 end) as total_add_carts ,
     		count(case when event_name = 'Add to Cart' and visit_purchase is null then 1 end) as total_abandoned ,    
-    		count (case when visit_purchase is not null then 1 end) as total_purchases
+    		count (case when event_name = 'Add to Cart' and visit_purchase is not null then 1 end) as total_purchases
 	from t2
 	left join clique_bait.event_identifier ei
 		on t2.event_type = ei.event_type
@@ -204,7 +203,7 @@ select * from product_summary
 order by product_category desc
 ````
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b21538c9-7124-41a6-8a0a-54885b70c818)
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/dfa7c25c-4ab2-49b8-8f85-59ec938da215)
 
 **Summary for each product category:**
 
@@ -229,7 +228,7 @@ select
     	count(case when event_name = 'Page View' then 1 end) as total_views  ,
   	count(case when event_name = 'Add to Cart' then 1 end) as total_add_carts ,
     	count(case when event_name = 'Add to Cart' and visit_purchase is null then 1 end) as total_abandoned ,    
-    	count (case when visit_purchase is not null then 1 end) as total_purchases
+    	count (case when event_name = 'Add to Cart' and visit_purchase is not null then 1 end) as total_purchases
 from t2
 left join clique_bait.event_identifier ei
 	on t2.event_type = ei.event_type
@@ -240,27 +239,47 @@ group by
 having product_category <> 'null'    
 ````
 
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/1e2073c5-ad36-4fe8-991b-c50a94bb7218)
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/5caf5423-419a-409b-bfcd-6eec75fdcecb)
 
 Use your 2 new output tables - answer the following questions:
 
 1. Which product had the most views, cart adds and purchases?
 - In this picture, we can see that Shellfish products are the best sellers. Oyster is the product with the most views, while Lobster is the product with the most 'Add to Cart' and purchase actions
   
-![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/f8c65ef6-13a7-4e59-b70a-44d4bb48338e)
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b84b43ea-2161-4e31-8f47-28ed7dba66e0)
 
 2. Which product was most likely to be abandoned?
 - Russian Caviar
   
 3. Which product had the highest view to purchase percentage?
+```sql
+select 
+	product,
+    round((total_purchases :: numeric /  total_views :: numeric) * 100,2) as percentage_view_to_purchase
+from product_summary
+order by percentage_view_to_purchase desc
+limit 1
+````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/0245b0c1-0de0-496c-a497-b9dfccfda2a4)
 
 4. What is the average conversion rate from view to cart add?
+```sql
+select 
+    round((sum(total_add_carts :: numeric) /  sum(total_views :: numeric)) * 100,2) as percentage_view_to_add_cart
+from product_summary
+````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2a11073c-7895-4b76-ad25-1e23c3ad2134)
 
 5. What is the average conversion rate from cart add to purchase?
+```sql
+select 
+    round((sum(total_add_carts :: numeric) /  sum(total_purchases :: numeric)) * 100,2) as percentage_add_carts_to_purchase
+from product_summary
+````
 
-
-
-
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/faaf6a76-826f-4494-88f6-600da1b582fb)
 
 #### 4. Campaigns Analysis
 Generate a table that has 1 single row for every unique **visit_id** record and has the following columns:
