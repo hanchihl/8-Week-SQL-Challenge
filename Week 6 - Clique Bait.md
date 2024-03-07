@@ -167,63 +167,100 @@ Using a single SQL query - create a new output table which has the following det
 - How many times was each product purchased?
 Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products.
 
+```sql
+with 
+t1 as 
+	(select 
+     		distinct visit_id as visit_purchase
+     	from clique_bait.events
+	where event_type = 3),
+t2 as
+    	(select 
+     		e.visit_id,
+        	e.page_id,
+        	e.event_type,
+       	 	t1.visit_purchase
+	from clique_bait.events e  
+    	left join t1
+    		on t1.visit_purchase = e.visit_id),
+product_summary as
+	(select
+   		product_category,
+		p.page_name as product,
+    		count(case when event_name = 'Page View' then 1 end) as total_views  ,
+  		count(case when event_name = 'Add to Cart' then 1 end) as total_add_carts ,
+    		count(case when event_name = 'Add to Cart' and visit_purchase is null then 1 end) as total_abandoned ,    
+    		count (case when visit_purchase is not null then 1 end) as total_purchases
+	from t2
+	left join clique_bait.event_identifier ei
+		on t2.event_type = ei.event_type
+	left join clique_bait.page_hierarchy p
+		on t2.page_id = p.page_id 
+	group by 
+   		p.page_name,
+   		product_category
+	having product_category <> 'null'    )
+select * from product_summary
+order by product_category desc
+````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/b21538c9-7124-41a6-8a0a-54885b70c818)
+
+**Summary for each product category:**
+
+```sql
+with 
+t1 as 
+	(select 
+     		distinct visit_id as visit_purchase
+     	from clique_bait.events
+	where event_type = 3),
+t2 as
+    	(select 
+     		e.visit_id,
+        	e.page_id,
+        	e.event_type,
+       	 	t1.visit_purchase
+	from clique_bait.events e  
+    	left join t1
+    		on t1.visit_purchase = e.visit_id)
+select
+   	product_category,
+    	count(case when event_name = 'Page View' then 1 end) as total_views  ,
+  	count(case when event_name = 'Add to Cart' then 1 end) as total_add_carts ,
+    	count(case when event_name = 'Add to Cart' and visit_purchase is null then 1 end) as total_abandoned ,    
+    	count (case when visit_purchase is not null then 1 end) as total_purchases
+from t2
+left join clique_bait.event_identifier ei
+	on t2.event_type = ei.event_type
+left join clique_bait.page_hierarchy p
+	on t2.page_id = p.page_id 
+group by 
+   	product_category
+having product_category <> 'null'    
+````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/1e2073c5-ad36-4fe8-991b-c50a94bb7218)
+
 Use your 2 new output tables - answer the following questions:
 
 1. Which product had the most views, cart adds and purchases?
+- In this picture, we can see that Shellfish products are the best sellers. Oyster is the product with the most views, while Lobster is the product with the most 'Add to Cart' and purchase actions
+  
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/f8c65ef6-13a7-4e59-b70a-44d4bb48338e)
+
 2. Which product was most likely to be abandoned?
+- Russian Caviar
+  
 3. Which product had the highest view to purchase percentage?
+
 4. What is the average conversion rate from view to cart add?
+
 5. What is the average conversion rate from cart add to purchase?
 
-```sql
-with t1 as
-(
-  select 
-	p.page_name as product,
-    count(
-      	case when event_name = 'Page View' then 1 end) as total_views     
-	from clique_bait.events e
-	left join clique_bait.event_identifier ei
-		on e.event_type = ei.event_type
-	left join clique_bait.page_hierarchy p
-		on e.page_id = p.page_id    
-	group by p.page_name),
-t2 as    
-(
-  select 
-	p.page_name as product,
-    count(
-      	case when event_name = 'Add to Cart' then 1 end) as total_add_carts   
-	from clique_bait.events e
-	left join clique_bait.event_identifier ei
-		on e.event_type = ei.event_type
-	left join clique_bait.page_hierarchy p
-		on e.page_id = p.page_id    
-	group by p.page_name),
-t4 as
-(
-  select 
-	p.page_name as product,
-    count(
-      	case when event_name = 'Purchase' then 1 end) as total_purchase   
-	from clique_bait.events e
-	left join clique_bait.event_identifier ei
-		on e.event_type = ei.event_type
-	left join clique_bait.page_hierarchy p
-		on e.page_id = p.page_id    
-	group by p.page_name)
 
-select 
-	t1.product, 
-    total_views,
-    total_add_carts,
-    total_purchase
-from t1
-left join t2
-	on t1.product = t2.product
-left join t4
-	on t1.product = t4.product    
-````
+
+
 
 #### 4. Campaigns Analysis
 Generate a table that has 1 single row for every unique **visit_id** record and has the following columns:
