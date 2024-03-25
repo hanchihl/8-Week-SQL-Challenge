@@ -293,12 +293,40 @@ Generate a table that has 1 single row for every unique **visit_id** record and 
 - campaign_name: map the visit to a campaign if the visit_start_time falls between the start_date and end_date
 - impression: count of ad impressions for each visit
 - click: count of ad clicks for each visit
-- (Optional column) cart_products: a comma separated text value with products added to the cart sorted by the order they were added to the cart (hint: use the sequence_number)
-Use the subsequent dataset to generate at least 5 insights for the Clique Bait team - bonus: prepare a single A4 infographic that the team can use for their management reporting sessions, be sure to emphasise the most important points from your findings.
+- (Optional column) cart_products: a comma separated text value with products added to the cart sorted by the order they were added to the cart (hint: use the sequence_number).
 
-Some ideas you might want to investigate further include:
+```sql
+select 
+	visit_id,
+    	user_id,
+    	min(event_time) as earliest_visit_time,
+   	 count(distinct e.page_id) as total_page_view ,
+    	count(distinct case
+        	when event_name = 'Add to Cart' and ph.product_category <> 'null' then ph.product_category end) as total_product_add_card,
+	max( case
+        	when event_name = 'Purchase' then 1 else 0 end) as purchase,
+	max(c.campaign_name) as campaign_name,
+    	sum(case
+        	when ei.event_name = 'Ad Impression' then 1 else 0 end) as total_impression,
+    	sum(case
+        	when ei.event_name = 'Ad Click' then 1 else 0 end) as total_ad_click    
+from clique_bait.events e
+left join clique_bait.users u on e.cookie_id = u.cookie_id
+left join clique_bait.event_identifier ei on e.event_type = ei.event_type
+left join clique_bait.page_hierarchy ph on e.page_id = ph.page_id
+left join clique_bait.campaign_identifier c on e.event_time between c.start_date and c.end_date
+group by visit_id, user_id
+````
 
-- Identifying users who have received impressions during each campaign period and comparing each metric with other users who did not have an impression event
-- Does clicking on an impression lead to higher purchase rates?
-- What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
-- What metrics can you use to quantify the success or failure of each campaign compared to eachother?
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/62c30867-d568-40af-ba59-59a836b9f8c2)
+
+#### 5. Insights
+
+1. Identifying users who have received impressions during each campaign period and comparing each metric with other users who did not have an impression event
+
+
+2. Does clicking on an impression lead to higher purchase rates?
+
+3. What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
+
+4. What metrics can you use to quantify the success or failure of each campaign compared to eachother?
