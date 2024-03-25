@@ -338,7 +338,7 @@ from summary
 
 ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/7c827c61-0f42-42c8-9369-ab7d225d03e1)
 
-**** Clicking on an impression lead to higher purchase rates?
+##### Clicking on an impression lead to higher purchase rates
 
 3. What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
 
@@ -355,6 +355,6 @@ from summary
 
 ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/37872334-e343-4f08-a3aa-ab7e81ca8544)
 
-**** Impressions significantly influence customer behavior, leading to higher purchase rates. Specifically, customers who engage with ads after receiving impressions show a notably higher propensity to make purchases. This highlights the pivotal role of impressions in driving customer conversions. To capitalize on this, Clique Bait should prioritize increasing impressions for each customer and develop captivating ad content to further stimulate engagement. This strategic focus is likely to yield greater sales and overall success for the platform.
+##### Impressions significantly influence customer behavior, leading to higher purchase rates. Specifically, customers who engage with ads after receiving impressions show a notably higher propensity to make purchases. This highlights the pivotal role of impressions in driving customer conversions. To capitalize on this, Clique Bait should prioritize increasing impressions for each customer and develop captivating ad content to further stimulate engagement. This strategic focus is likely to yield greater sales and overall success for the platform.
 
 4. What metrics can you use to quantify the success or failure of each campaign compared to eachother?
