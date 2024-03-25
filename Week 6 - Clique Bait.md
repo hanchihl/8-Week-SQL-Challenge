@@ -255,7 +255,7 @@ Use your 2 new output tables - answer the following questions:
 ```sql
 select 
 	product,
-    round((total_purchases :: numeric /  total_views :: numeric) * 100,2) as percentage_view_to_purchase
+    	round((total_purchases :: numeric /  total_views :: numeric) * 100,2) as percentage_view_to_purchase
 from product_summary
 order by percentage_view_to_purchase desc
 limit 1
@@ -300,7 +300,7 @@ select
 	visit_id,
     	user_id,
     	min(event_time) as earliest_visit_time,
-   	 count(distinct e.page_id) as total_page_view ,
+	count(distinct e.page_id) as total_page_view ,
     	count(distinct case
         	when event_name = 'Add to Cart' and ph.product_category <> 'null' then ph.product_category end) as total_product_add_card,
 	max( case
@@ -327,6 +327,34 @@ group by visit_id, user_id
 
 2. Does clicking on an impression lead to higher purchase rates?
 
+```sql
+select 
+	round((count (case when total_ad_click = 1 and purchase = 1 then 1 end) ::float
+    	/ count (case when total_ad_click = 1 then 1 end) * 100)::numeric, 2) as purchase_rate_ad_click,
+	round((count (case when total_ad_click = 0 and purchase = 1 then 1 end) ::float
+    	/ count (case when total_ad_click = 0 then 1 end) * 100)::numeric ,2) as purchase_rate_no_ad_click
+from summary
+````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/7c827c61-0f42-42c8-9369-ab7d225d03e1)
+
+**** Clicking on an impression lead to higher purchase rates?
+
 3. What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
+
+```sql
+select 
+	round((count (case when total_ad_click = 1 and purchase = 1 then 1 end) ::float
+    	/ count (case when total_ad_click = 1 then 1 end) * 100)::numeric, 2) as purchase_rate_ad_click,
+	round((count (case when total_impression = 1 and total_ad_click = 0 and purchase = 1 then 1 end) ::float
+   	 / count (case when total_impression = 1 and total_ad_click = 0 then 1 end) * 100)::numeric ,2) as purchase_rate_no_ad_click,
+	round((count (case when total_impression = 0 and purchase = 1 then 1 end) ::float
+   	 / count (case when total_impression = 0 then 1 end) * 100)::numeric ,2) as purchase_rate_no_impression
+from summary
+````
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/37872334-e343-4f08-a3aa-ab7e81ca8544)
+
+**** Impressions significantly influence customer behavior, leading to higher purchase rates. Specifically, customers who engage with ads after receiving impressions show a notably higher propensity to make purchases. This highlights the pivotal role of impressions in driving customer conversions. To capitalize on this, Clique Bait should prioritize increasing impressions for each customer and develop captivating ad content to further stimulate engagement. This strategic focus is likely to yield greater sales and overall success for the platform.
 
 4. What metrics can you use to quantify the success or failure of each campaign compared to eachother?
