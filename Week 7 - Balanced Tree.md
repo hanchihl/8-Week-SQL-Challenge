@@ -20,11 +20,11 @@ balanced_tree.sales contains product level information for all the transactions 
 #### Product Hierarcy & Product Price
 Thes tables are used only for the bonus question where we will use them to recreate the balanced_tree.product_details table.
 
-balanced_tree.product_hierarchy
+*balanced_tree.product_hierarchy*
 
 ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/72ed9751-6f83-4a62-91d3-d7fcf9f31aa8)
 
-balanced_tree.product_prices
+*balanced_tree.product_prices*
 
 ![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/2c692484-5bf6-4684-a210-0f4fdc615ff5)
 
