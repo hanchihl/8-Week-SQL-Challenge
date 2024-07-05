@@ -35,15 +35,70 @@ Each question can be answered using a single query - but as you are writing the 
 
 #### High Level Sales Analysis
 1. What was the total quantity sold for all products?
+```sql
+select sum(qty) as total_quantity_sale
+from balanced_tree.sales 
+```
+
+**Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/c491f51a-02ac-48a9-b4cd-5bc285513152)
+
 2. What is the total generated revenue for all products before discounts?
 3. What was the total discount amount for all products?
+```sql
+select 
+	sum(qty*price) as revenue_before_discount,
+	sum(qty*discount) as total_discount
+from balanced_tree.sales 
+```
+
+**Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/8cdd1a6a-5c96-4d14-8980-527e10b2c11d)
 
 #### Transaction Analysis
 1. How many unique transactions were there?
+```sql
+select count(distinct txn_id) as total_unique_trasaction
+from balanced_tree.sales
+```
+
+**Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/1b13e322-78d6-4c5b-aa94-81d4e681adae)
+
 2. What is the average unique products purchased in each transaction?
+```sql
+with t as
+
+(select count(distinct prod_id) as unique_product
+from balanced_tree.sales 
+group by txn_id)
+
+select round(avg(unique_product),2) as avg_unique_prodct_per_transaction
+from t;
+```
+
+**Answer:**
+
+![image](https://github.com/hanchihl/8-Week-SQL-Challenge/assets/89310493/79e74b5e-15b8-4a41-9f0a-ed69ff7b66ff)
+
 3. What are the 25th, 50th and 75th percentile values for the revenue per transaction?
+```sql
+
+```
+
 4. What is the average discount value per transaction?
+```sql
+
+```
+
 5. What is the percentage split of all transactions for members vs non-members?
+```sql
+
+```
+
 6. What is the average revenue for member transactions and non-member transactions?
 
 #### Product Analysis
