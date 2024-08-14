@@ -86,32 +86,150 @@ from t;
 
 3. What are the 25th, 50th and 75th percentile values for the revenue per transaction?
 ```sql
-
+with t as
+(select 
+	txn_id,
+    sum(qty *price*(100-discount)/100) as revenue
+from balanced_tree.sales 
+group by txn_id)
+select 
+	percentile_cont(0.25) within group (order by revenue) as p25th_percentile_value,
+	percentile_cont(0.5) within group (order by revenue) as p50th_percentile_value,
+	percentile_cont(0.75) within group (order by revenue) as p75th_percentile_value    
+from t
 ```
+
+**Answer:**
+
+![image](https://github.com/user-attachments/assets/e56c5a0b-e135-4e54-993f-b8c53b1270e0)
 
 4. What is the average discount value per transaction?
 ```sql
+with t as
+(select 
+	txn_id,
+    sum(qty *price*discount/100) as discount
+from balanced_tree.sales 
+group by txn_id)
+select 
+	round(avg(discount),2) as avg_discount
+from t
+```
+
+**Answer:**
+
+![image](https://github.com/user-attachments/assets/2ad599a1-d04e-4776-ac48-2c294b7f6abc)
+
+5. What is the percentage split of all transactions for members vs non-members?
+```sql
+select 
+	round( count(case when member = 't' then 1 end) *100.0 / count (*),2) as percentage_of_member,
+	round( count(case when member = 'f' then 1 end) *100.0 / count (*),2) as percentage_of_nonmember 
+from balanced_tree.sales 
+```
+
+**Answer:**
+
+![image](https://github.com/user-attachments/assets/e8b960ef-a10f-4e77-9e4e-fa5e71609e67)
+
+6. What is the average revenue for member transactions and non-member transactions?
+```sql
+select 
+    round(
+        SUM(CASE WHEN member = 't' THEN qty * price * (100.0 - discount) END) / 
+      	count (CASE WHEN member = 't' THEN 1 END))  as avg_revenue_of_member,
+    round(
+        SUM(CASE WHEN member = 'f' THEN qty * price * (100.0 - discount) END) / 
+      	count (CASE WHEN member = 't' THEN 1 END))  as avg_revenue_of_nonmember
+FROM 
+    balanced_tree.sales;
 
 ```
 
-5. What is the percentage split of all transactions for members vs non-members?
+**Answer:**
+
+![image](https://github.com/user-attachments/assets/a79a046f-4669-4799-a000-57d10cb63e26)
+
+#### Product Analysis
+1. What are the top 3 products by total revenue before discount?
 ```sql
 
 ```
 
-6. What is the average revenue for member transactions and non-member transactions?
+**Answer:**
 
-#### Product Analysis
-1. What are the top 3 products by total revenue before discount?
+
 2. What is the total quantity, revenue and discount for each segment?
+```sql
+
+```
+
+**Answer:**
+
+
 3. What is the top selling product for each segment?
+```sql
+
+```
+
+**Answer:**
+
+
 4. What is the total quantity, revenue and discount for each category?
+```sql
+
+```
+
+**Answer:**
+
+
 5. What is the top selling product for each category?
+```sql
+
+```
+
+**Answer:**
+
+
 6. What is the percentage split of revenue by product for each segment?
+```sql
+
+```
+
+**Answer:**
+
+
 7. What is the percentage split of revenue by segment for each category?
+```sql
+
+```
+
+**Answer:**
+
+
 8. What is the percentage split of total revenue by category?
+```sql
+
+```
+
+**Answer:**
+
+
 9. What is the total transaction “penetration” for each product? (hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)
+```sql
+
+```
+
+**Answer:**
+
+
 10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?
+```sql
+
+```
+
+**Answer:**
+
 
 #### Reporting Challenge
 Write a single SQL script that combines all of the previous questions into a scheduled report that the Balanced Tree team can run at the beginning of each month to calculate the previous month’s values.
