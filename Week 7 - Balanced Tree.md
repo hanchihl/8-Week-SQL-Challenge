@@ -89,7 +89,7 @@ from t;
 with t as
 (select 
 	txn_id,
-    sum(qty *price*(100-discount)/100) as revenue
+    	sum(qty *price*(100-discount)/100) as revenue
 from balanced_tree.sales 
 group by txn_id)
 select 
@@ -108,7 +108,7 @@ from t
 with t as
 (select 
 	txn_id,
-    sum(qty *price*discount/100) as discount
+    	sum(qty *price*discount/100) as discount
 from balanced_tree.sales 
 group by txn_id)
 select 
@@ -153,43 +153,98 @@ FROM
 #### Product Analysis
 1. What are the top 3 products by total revenue before discount?
 ```sql
-
+select 
+	product_name ,
+	sum(s.qty * s.price) as revenue 
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by product_name
+order by revenue desc
+limit 3
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/f3330e49-5db6-4bb7-88d3-39d27d74f4f3)
 
 2. What is the total quantity, revenue and discount for each segment?
 ```sql
-
+select 
+	segment_name,
+    	sum(s.qty) as total_quantity,
+	sum(s.qty * s.price * (100 - s.discount) /100) as revenue,
+    	sum(s.qty * s.price * s.discount/100) as discount
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by segment_name
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/dd82f604-6946-4a3b-b36b-41539cc8b3fa)
 
 3. What is the top selling product for each segment?
 ```sql
-
+select 
+	distinct on (segment_name)
+    	segment_name,
+	product_name,
+	sum(s.qty * s.price * (100 - s.discount) /100) as revenue
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by 
+	segment_name,
+    	product_name
+order by 
+	segment_name,
+	revenue desc
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/732dd55f-924b-418b-a14d-55ebf634f049)
 
 4. What is the total quantity, revenue and discount for each category?
 ```sql
-
+select 
+	category_name,
+    	sum(s.qty) as total_quantity,
+	sum(s.qty * s.price * (100 - s.discount) /100) as revenue,
+    	sum(s.qty * s.price * s.discount/100) as discount
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by category_name
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/f5b002be-6846-48ed-972e-3d1d0891253d)
 
 5. What is the top selling product for each category?
 ```sql
-
+select 
+	distinct on (category_name)
+    	category_name,
+	product_name,
+	sum(s.qty * s.price * (100 - s.discount) /100) as revenue
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by 
+	category_name,
+    	product_name
+order by 
+	category_name,
+	revenue desc
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/9f45f135-43c6-4cfc-a5fd-3b766b512c55)
 
 6. What is the percentage split of revenue by product for each segment?
 ```sql
