@@ -248,11 +248,25 @@ order by
 
 6. What is the percentage split of revenue by product for each segment?
 ```sql
-
+with t as
+(select  
+	segment_name, 
+    product_name,
+    sum(s.qty * s.price * (100 - s.discount) /100) as revenue
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by segment_name, product_name)
+select 
+	segment_name, 
+    product_name,
+    round(revenue * 100/ sum(revenue) over (partition by segment_name),2) as segment_percentage
+from t
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/1a995603-afc3-4502-8672-b023b290b819)
 
 7. What is the percentage split of revenue by segment for each category?
 ```sql
