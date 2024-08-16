@@ -388,6 +388,37 @@ Use a single SQL query to transform the product_hierarchy and product_prices dat
 
 Hint: you may want to consider using a recursive CTE to solve this problem!
 
+```sql
+with t as
+(select 
+	p1.id as style_id,
+    p1.parent_id as segment_id,
+    p1.level_text as style_name,
+    p2.parent_id as category_id,
+    p2.level_text as segment_name
+from balanced_tree.product_hierarchy p1
+left join balanced_tree.product_hierarchy p2
+on p2.id = p1.parent_id)
 
+select 
+	p.product_id,
+    p.price,
+    concat (t.style_name, '-' ,p3.level_text )as product_name,
+	t.category_id,
+    t.segment_id,
+    t.style_id,
+    p3.level_text as category_name,
+    t.segment_name,
+    t.style_name   
+from t
+left join  balanced_tree.product_hierarchy p3
+on t.category_id = p3.id 
+left join balanced_tree.product_prices p
+on p.id = t.style_id
+where t.category_id is not null
+```
 
+**Answer:**
+
+![image](https://github.com/user-attachments/assets/6d016543-19c9-4c39-9a63-44fea37908df)
 
