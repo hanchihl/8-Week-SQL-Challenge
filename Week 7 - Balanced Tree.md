@@ -143,7 +143,6 @@ select
       	count (CASE WHEN member = 't' THEN 1 END))  as avg_revenue_of_nonmember
 FROM 
     balanced_tree.sales;
-
 ```
 
 **Answer:**
@@ -251,16 +250,16 @@ order by
 with t as
 (select  
 	segment_name, 
-    product_name,
-    sum(s.qty * s.price * (100 - s.discount) /100) as revenue
+    	product_name,
+    	sum(s.qty * s.price * (100 - s.discount) /100) as revenue
 from balanced_tree.sales s
 left join balanced_tree.product_details d
 on s.prod_id = d.product_id
 group by segment_name, product_name)
 select 
 	segment_name, 
-    product_name,
-    round(revenue * 100/ sum(revenue) over (partition by segment_name),2) as segment_percentage
+    	product_name,
+    	round(revenue * 100/ sum(revenue) over (partition by segment_name),2) as segment_percentage
 from t
 ```
 
@@ -270,35 +269,110 @@ from t
 
 7. What is the percentage split of revenue by segment for each category?
 ```sql
-
+with t as
+(select  
+	category_name, 
+    	segment_name,
+    	sum(s.qty * s.price * (100 - s.discount) /100) as revenue
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by category_name, segment_name)
+select 
+	category_name, 
+    	segment_name,
+    	round(revenue * 100/ sum(revenue) over (partition by category_name),2) as category_percentage
+from t
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/d8c8752b-2be6-491e-84da-c39c8bfb5d81)
 
 8. What is the percentage split of total revenue by category?
 ```sql
-
+select 
+	category_name, 
+  	round(revenue / sum(revenue) over()  * 100,2) as percentage
+from(
+select  
+		category_name, 
+    	sum(s.qty * s.price * (100 - s.discount) /100) as revenue
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by category_name) a
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/8cea7918-c351-4545-97db-b2f5047bc460)
 
 9. What is the total transaction “penetration” for each product? (hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)
 ```sql
+with t1 as
+(select 
+ 	product_name,
+ 	count(distinct txn_id) as total_transaction
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id
+group by product_name),
+t2 as
+(select count(distinct txn_id) as all_transaction
+ from balanced_tree.sales)
 
+select
+ 	product_name,
+    total_transaction,
+    round(total_transaction/all_transaction ::numeric,2) AS penetration
+from t1, t2
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/812d2930-c22f-45ca-b04a-e4edff4c8575)
 
 10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?
 ```sql
-
+with t1 as
+(select product_name as prod_id, txn_id
+from balanced_tree.sales s
+left join balanced_tree.product_details d
+on s.prod_id = d.product_id),
+ 
+product_combinations as (
+    select 
+        s1.txn_id,
+        least(s1.prod_id, s2.prod_id, s3.prod_id) as prod1,
+        greatest(s1.prod_id, s2.prod_id, s3.prod_id) as prod3,
+        case 
+            when s1.prod_id <> least(s1.prod_id, s2.prod_id, s3.prod_id) and s1.prod_id <> greatest(s1.prod_id, s2.prod_id, s3.prod_id) then s1.prod_id
+            when s2.prod_id <> least(s1.prod_id, s2.prod_id, s3.prod_id) and s2.prod_id <> greatest(s1.prod_id, s2.prod_id, s3.prod_id) then s2.prod_id
+            else s3.prod_id
+        end as prod2
+    from 
+        t1 s1
+    join 
+        t1 s2 on s1.txn_id = s2.txn_id and s1.prod_id < s2.prod_id
+    join 
+        t1 s3 on s2.txn_id = s3.txn_id and s2.prod_id < s3.prod_id
+)
+select 
+    prod1, prod2, prod3, 
+    count(*) as combination_count
+from 
+    product_combinations pc
+group by 
+        prod1, prod2, prod3
+order by 
+    combination_count desc
+limit 1
 ```
 
 **Answer:**
 
+![image](https://github.com/user-attachments/assets/b8e18aae-46ff-4b28-94f7-c17ae27de8fd)
 
 #### Reporting Challenge
 Write a single SQL script that combines all of the previous questions into a scheduled report that the Balanced Tree team can run at the beginning of each month to calculate the previous month’s values.
