@@ -65,38 +65,74 @@ Most questions can be answered using a single query however some questions are m
 #### Data Exploration and Cleansing
 1. Update the fresh_segments.interest_metrics table by modifying the month_year column to be a date data type with the start of the month
 ```sql
-
+alter table fresh_segments.interest_metrics 
+alter column month_year type date
+using to_date(concat ('01-',month_year), 'dd-mm-yyyy');
 ```
 
 2. What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?
 ```sql
-
+select 
+	month_year,
+    count(*) as total_records
+from fresh_segments.interest_metrics
+group by month_year
+order by month_year asc
 ```
 
-3. What do you think we should do with these null values in the fresh_segments.interest_metrics
-```sql
+**Answer:**
 
+![image](https://github.com/user-attachments/assets/68c444ff-87ba-4495-a366-af72077fbaaa)
+
+3. What do you think we should do with these null values in the fresh_segments.interest_metrics
+
+ - Null values appear in *month_year* , *interest_id*. We can not analyze without important data such as internes_id, so i will drop these records with null values.
+
+```sql
+delete from  fresh_segments.interest_metrics 
+where interest_id is null;
 ```
 
 4. How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?
 ```sql
-
+select 
+  count(distinct map.id) as map_id_count,
+  count(distinct metrics.interest_id) as metrics_id_count,
+  sum(case when map.id is null then 1 end) as not_in_metric,
+  sum(case when metrics.interest_id is null then 1 end) as not_in_map
+from fresh_segments.interest_map map
+full outer join fresh_segments.interest_metrics metrics
+  on metrics.interest_id::integer = map.id;
 ```
+
+**Answer:**
+
+![image](https://github.com/user-attachments/assets/3d3ae0ba-376e-4ca7-aee5-6e54a75fef24)
+
+- There are no interest_id that did not appear in interest_map. All 1,202 ids were present in the interest_metrics table.
+- There are 7 ids that did not appear in interest_metrics.
 
 5. Summarise the id values in the fresh_segments.interest_map by its total record count in this table
 ```sql
 
 ```
 
+**Answer:**
+
 6. What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246 in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map except from the id column.
 ```sql
 
 ```
 
+**Answer:**
+
 7. Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?
 ```sql
 
 ```
+
+**Answer:**
+
 
 #### Interest Analysis
 1. Which interests have been present in all month_year dates in our dataset?
@@ -104,10 +140,15 @@ Most questions can be answered using a single query however some questions are m
 
 ```
 
+**Answer:**
+
 2. Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which total_months value passes the 90% cumulative percentage value?
 ```sql
 
 ```
+
+**Answer:**
+
 
 3. If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?
 ```sql
@@ -119,7 +160,13 @@ Most questions can be answered using a single query however some questions are m
 
 ```
 
+**Answer:**
+
+
 5. After removing these interests - how many unique interests are there for each month?
+
+**Answer:**
+
 
 #### Segment Analysis
 1. Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year
@@ -127,10 +174,16 @@ Most questions can be answered using a single query however some questions are m
 
 ```
 
+**Answer:**
+
+
 2. Which 5 interests had the lowest average ranking value?
 ```sql
 
 ```
+
+**Answer:**
+
 
 3. Which 5 interests had the largest standard deviation in their percentile_ranking value?
 ```sql
